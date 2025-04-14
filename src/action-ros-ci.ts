@@ -430,6 +430,7 @@ async function run_throw(): Promise<void> {
 	const skipRosdepInstall = core.getInput("skip-rosdep-install") === "true";
 	const rosdepCheck = core.getInput("rosdep-check") === "true";
 	const sshPort = core.getInput("ssh-port");
+	const useHttps = core.getBooleanInput("use-https");
 
 	// Check if PR overrides/adds supplemental repos files
 	const vcsReposOverride = dep.getReposFilesOverride(github.context.payload);
@@ -582,31 +583,37 @@ async function run_throw(): Promise<void> {
 		);
 		// Use a global insteadof entry because local configs aren't observed by git clone (ssh)
 		if (sshPort !== "") {
-			await execShellCommand(
-				[
-					`/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:${sshPort}/'`,
-				],
-				options,
-			);
-			await execShellCommand(
-				[
-					`/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:${sshPort}/'`,
-				],
-				options,
-			);
+			if (useHttps) {
+				await execShellCommand(
+					[
+						`/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:${sshPort}/'`,
+					],
+					options,
+				);
+			} else {
+				await execShellCommand(
+					[
+						`/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:${sshPort}/'`,
+					],
+					options,
+				);
+			}
 		} else {
-			await execShellCommand(
-				[
-					`/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:'`,
-				],
-				options,
-			);
-			await execShellCommand(
-				[
-					`/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:'`,
-				],
-				options,
-			);
+			if (useHttps) {
+				await execShellCommand(
+					[
+						`/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:'`,
+					],
+					options,
+				);
+			} else {
+				await execShellCommand(
+					[
+						`/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:'`,
+					],
+					options,
+				);
+			}
 		}
 		if (core.isDebug()) {
 			await execShellCommand(

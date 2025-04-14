@@ -124,6 +124,11 @@ inputs:
       SSH port used to access repositories.
       Needed to overide the ssh url with https.
     required: false
+  use-https:
+    default: true
+    description: |
+      Use https instead of http to access repositories.
+    required: false
 outputs:
   ros-workspace-directory-name:
     description: |
