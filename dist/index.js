@@ -31128,12 +31128,12 @@ function run_throw() {
             if (sshPort !== "") {
                 if (useHttps) {
                     yield execShellCommand([
-                        `/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:${sshPort}/'`,
+                        `/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:${sshPort}'`,
                     ], options);
                 }
                 else {
                     yield execShellCommand([
-                        `/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:${sshPort}/'`,
+                        `/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:${sshPort}'`,
                     ], options);
                 }
             }

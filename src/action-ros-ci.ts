@@ -586,14 +586,14 @@ async function run_throw(): Promise<void> {
 			if (useHttps) {
 				await execShellCommand(
 					[
-						`/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:${sshPort}/'`,
+						`/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:${sshPort}'`,
 					],
 					options,
 				);
 			} else {
 				await execShellCommand(
 					[
-						`/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:${sshPort}/'`,
+						`/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:${sshPort}'`,
 					],
 					options,
 				);
