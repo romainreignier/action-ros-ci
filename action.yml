@@ -118,6 +118,12 @@ inputs:
       Scheduled events default to latest commit of default branch.
       Set this if you want the scheduled job to run on on a specific branch.
     required: false
+  ssh-port:
+    default: ""
+    description: |
+      SSH port used to access repositories.
+      Needed to overide the ssh url with https.
+    required: false
 outputs:
   ros-workspace-directory-name:
     description: |
