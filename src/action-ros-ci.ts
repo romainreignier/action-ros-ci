@@ -528,7 +528,9 @@ async function run_throw(): Promise<void> {
 	}
 
 	const githubServerUrl = process.env.GITHUB_SERVER_URL as string;
-	const gihubServerDomain = githubServerUrl.replace("https://", "");
+	const gihubServerDomain = githubServerUrl
+		.replace("https://", "")
+		.replace("http://", "");
 	if (importToken !== "") {
 		// Unset all local extraheader config entries possibly set by actions/checkout,
 		// because local settings take precedence and the default token used by
@@ -557,6 +559,12 @@ async function run_throw(): Promise<void> {
 			],
 			options,
 		);
+		await execShellCommand(
+			[
+				`/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}.insteadof 'http://${gihubServerDomain}'`,
+			],
+			options,
+		);
 		// same as last three comands but for ssh urls
 		await execShellCommand(
 			[
@@ -579,10 +587,22 @@ async function run_throw(): Promise<void> {
 				],
 				options,
 			);
+			await execShellCommand(
+				[
+					`/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'git@${gihubServerDomain}:${sshPort}/'`,
+				],
+				options,
+			);
 		} else {
 			await execShellCommand(
 				[
 					`/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'git@${gihubServerDomain}:'`,
+				],
+				options,
+			);
+			await execShellCommand(
+				[
+					`/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'git@${gihubServerDomain}:'`,
 				],
 				options,
 			);
