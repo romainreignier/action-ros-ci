@@ -31095,6 +31095,7 @@ function run_throw() {
         const gihubServerDomain = githubServerUrl
             .replace("https://", "")
             .replace("http://", "");
+        const gihubServerDomainWithoutPort = gihubServerDomain.split(":")[0];
         if (importToken !== "") {
             // Unset all local extraheader config entries possibly set by actions/checkout,
             // because local settings take precedence and the default token used by
@@ -31125,18 +31126,18 @@ function run_throw() {
             // Use a global insteadof entry because local configs aren't observed by git clone (ssh)
             if (sshPort !== "") {
                 yield execShellCommand([
-                    `/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'git@${gihubServerDomain}:${sshPort}/'`,
+                    `/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'git@${gihubServerDomainWithoutPort}:${sshPort}/'`,
                 ], options);
                 yield execShellCommand([
-                    `/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'git@${gihubServerDomain}:${sshPort}/'`,
+                    `/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'git@${gihubServerDomainWithoutPort}:${sshPort}/'`,
                 ], options);
             }
             else {
                 yield execShellCommand([
-                    `/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'git@${gihubServerDomain}:'`,
+                    `/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'git@${gihubServerDomainWithoutPort}:'`,
                 ], options);
                 yield execShellCommand([
-                    `/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'git@${gihubServerDomain}:'`,
+                    `/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'git@${gihubServerDomainWithoutPort}:'`,
                 ], options);
             }
             if (core.isDebug()) {
