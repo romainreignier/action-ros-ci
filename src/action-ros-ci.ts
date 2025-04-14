@@ -584,26 +584,26 @@ async function run_throw(): Promise<void> {
 		if (sshPort !== "") {
 			await execShellCommand(
 				[
-					`/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'git@${gihubServerDomainWithoutPort}:${sshPort}/'`,
+					`/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:${sshPort}/'`,
 				],
 				options,
 			);
 			await execShellCommand(
 				[
-					`/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'git@${gihubServerDomainWithoutPort}:${sshPort}/'`,
+					`/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:${sshPort}/'`,
 				],
 				options,
 			);
 		} else {
 			await execShellCommand(
 				[
-					`/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'git@${gihubServerDomainWithoutPort}:'`,
+					`/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:'`,
 				],
 				options,
 			);
 			await execShellCommand(
 				[
-					`/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'git@${gihubServerDomainWithoutPort}:'`,
+					`/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:'`,
 				],
 				options,
 			);

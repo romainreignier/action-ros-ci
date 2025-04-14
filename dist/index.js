@@ -31126,18 +31126,18 @@ function run_throw() {
             // Use a global insteadof entry because local configs aren't observed by git clone (ssh)
             if (sshPort !== "") {
                 yield execShellCommand([
-                    `/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'git@${gihubServerDomainWithoutPort}:${sshPort}/'`,
+                    `/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:${sshPort}/'`,
                 ], options);
                 yield execShellCommand([
-                    `/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'git@${gihubServerDomainWithoutPort}:${sshPort}/'`,
+                    `/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:${sshPort}/'`,
                 ], options);
             }
             else {
                 yield execShellCommand([
-                    `/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'git@${gihubServerDomainWithoutPort}:'`,
+                    `/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:'`,
                 ], options);
                 yield execShellCommand([
-                    `/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'git@${gihubServerDomainWithoutPort}:'`,
+                    `/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:'`,
                 ], options);
             }
             if (core.isDebug()) {
