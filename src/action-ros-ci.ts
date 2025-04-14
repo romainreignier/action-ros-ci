@@ -534,12 +534,13 @@ async function run_throw(): Promise<void> {
 		.replace("http://", "");
 	const gihubServerDomainWithoutPort = gihubServerDomain.split(":")[0];
 	if (importToken !== "") {
+		const httpsPrefix = useHttps ? "https" : "http";
 		// Unset all local extraheader config entries possibly set by actions/checkout,
 		// because local settings take precedence and the default token used by
 		// actions/checkout might not have the right permissions for any/all repos
 		await execShellCommand(
 			[
-				`/usr/bin/git config --local --unset-all http.https://${gihubServerDomain}/.extraheader || true`,
+				`/usr/bin/git config --local --unset-all http.${httpsPrefix}://${gihubServerDomain}/.extraheader || true`,
 			],
 			options,
 		);
@@ -549,21 +550,15 @@ async function run_throw(): Promise<void> {
 		);
 		await execShellCommand(
 			[
-				String.raw`/usr/bin/git submodule foreach --recursive git config --local --name-only --get-regexp 'http\.https\:\/\/${gihubServerDomainRegex}\/\.extraheader'` +
-					` && git config --local --unset-all 'http.https://${gihubServerDomain}/.extraheader' || true`,
+				String.raw`/usr/bin/git submodule foreach --recursive git config --local --name-only --get-regexp 'http\.${httpsPrefix}\:\/\/${gihubServerDomainRegex}\/\.extraheader'` +
+					` && git config --local --unset-all 'http.${httpsPrefix}://${gihubServerDomain}/.extraheader' || true`,
 			],
 			options,
 		);
 		// Use a global insteadof entry because local configs aren't observed by git clone
 		await execShellCommand(
 			[
-				`/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}.insteadof 'https://${gihubServerDomain}'`,
-			],
-			options,
-		);
-		await execShellCommand(
-			[
-				`/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}.insteadof 'http://${gihubServerDomain}'`,
+				`/usr/bin/git config --global url.${httpsPrefix}://x-access-token:${importToken}@${gihubServerDomain}/.insteadof '${httpsPrefix}://${gihubServerDomain}/'`,
 			],
 			options,
 		);
@@ -582,39 +577,15 @@ async function run_throw(): Promise<void> {
 			options,
 		);
 		// Use a global insteadof entry because local configs aren't observed by git clone (ssh)
-		if (sshPort !== "") {
-			if (useHttps) {
-				await execShellCommand(
-					[
-						`/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:${sshPort}'`,
-					],
-					options,
-				);
-			} else {
-				await execShellCommand(
-					[
-						`/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:${sshPort}'`,
-					],
-					options,
-				);
-			}
-		} else {
-			if (useHttps) {
-				await execShellCommand(
-					[
-						`/usr/bin/git config --global url.https://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:'`,
-					],
-					options,
-				);
-			} else {
-				await execShellCommand(
-					[
-						`/usr/bin/git config --global url.http://x-access-token:${importToken}@${gihubServerDomain}/.insteadof 'ssh://git@${gihubServerDomainWithoutPort}:'`,
-					],
-					options,
-				);
-			}
+		const httpsUrl = `${httpsPrefix}://x-access-token:${importToken}@${gihubServerDomain}`;
+		let sshUrl = `ssh://git@${gihubServerDomainWithoutPort}:`;
+		if (sshPort != "") {
+			sshUrl += `${sshPort}`;
 		}
+		await execShellCommand(
+			[`/usr/bin/git config --global url.'${httpsUrl}'.insteadof '${sshUrl}'`],
+			options,
+		);
 		if (core.isDebug()) {
 			await execShellCommand(
 				[`/usr/bin/git config --list --show-origin || true`],
