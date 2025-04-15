@@ -31097,8 +31097,8 @@ function run_throw() {
             .replace("https://", "")
             .replace("http://", "");
         const gihubServerDomainWithoutPort = gihubServerDomain.split(":")[0];
+        const httpsPrefix = useHttps ? "https" : "http";
         if (importToken !== "") {
-            const httpsPrefix = useHttps ? "https" : "http";
             // Unset all local extraheader config entries possibly set by actions/checkout,
             // because local settings take precedence and the default token used by
             // actions/checkout might not have the right permissions for any/all repos
@@ -31112,7 +31112,7 @@ function run_throw() {
             ], options);
             // Use a global insteadof entry because local configs aren't observed by git clone
             yield execShellCommand([
-                `/usr/bin/git config --global url.${httpsPrefix}://x-access-token:${importToken}@${gihubServerDomain}/.insteadof '${httpsPrefix}://${gihubServerDomain}/'`,
+                `/usr/bin/git config --global url.${httpsPrefix}://x-access-token:${importToken}@${gihubServerDomain}.insteadof '${httpsPrefix}://${gihubServerDomain}'`,
             ], options);
             // same as last three comands but for ssh urls
             yield execShellCommand([
@@ -31128,7 +31128,9 @@ function run_throw() {
             if (sshPort != "") {
                 sshUrl += `${sshPort}`;
             }
-            yield execShellCommand([`/usr/bin/git config --global url.'${httpsUrl}'.insteadof '${sshUrl}'`], options);
+            yield execShellCommand([
+                `/usr/bin/git config --global --add url.'${httpsUrl}'.insteadof '${sshUrl}'`,
+            ], options);
             if (core.isDebug()) {
                 yield execShellCommand([`/usr/bin/git config --list --show-origin || true`], options);
             }
@@ -31292,7 +31294,7 @@ done`;
         if (importToken !== "") {
             // Unset config so that it doesn't leak to other actions
             yield execShellCommand([
-                `/usr/bin/git config --global --unset-all url.https://x-access-token:${importToken}@${gihubServerDomain}.insteadof`,
+                `/usr/bin/git config --global --unset-all url.${httpsPrefix}://x-access-token:${importToken}@${gihubServerDomain}.insteadof`,
             ], options);
         }
     });
